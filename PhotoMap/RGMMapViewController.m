@@ -191,5 +191,6 @@
                          completion:^{
                              NSLog(@"Import Photo started");
                          }];
-    }}
+    }
+}
 @end

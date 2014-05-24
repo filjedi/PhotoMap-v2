@@ -24,7 +24,7 @@
 		E83657D819235CD7008DC8FC /* RGMMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E83657D719235CD7008DC8FC /* RGMMapViewController.m */; };
 		E83657DA19235D83008DC8FC /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E83657D919235D83008DC8FC /* MapKit.framework */; };
 		E83657DD19236FCC008DC8FC /* RGMMapViewAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = E83657DC19236FCC008DC8FC /* RGMMapViewAnnotation.m */; };
-		E83657E0192381C7008DC8FC /* RGMPhotosTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E83657DF192381C7008DC8FC /* RGMPhotosTableViewController.m */; };
+		E83657E0192381C7008DC8FC /* RGMTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E83657DF192381C7008DC8FC /* RGMTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,8 +61,8 @@
 		E83657D919235D83008DC8FC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		E83657DB19236FCC008DC8FC /* RGMMapViewAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RGMMapViewAnnotation.h; sourceTree = "<group>"; };
 		E83657DC19236FCC008DC8FC /* RGMMapViewAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RGMMapViewAnnotation.m; sourceTree = "<group>"; };
-		E83657DE192381C7008DC8FC /* RGMPhotosTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RGMPhotosTableViewController.h; sourceTree = "<group>"; };
-		E83657DF192381C7008DC8FC /* RGMPhotosTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RGMPhotosTableViewController.m; sourceTree = "<group>"; };
+		E83657DE192381C7008DC8FC /* RGMTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RGMTableViewController.h; sourceTree = "<group>"; };
+		E83657DF192381C7008DC8FC /* RGMTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RGMTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,8 +133,8 @@
 				E83657D719235CD7008DC8FC /* RGMMapViewController.m */,
 				E83657DB19236FCC008DC8FC /* RGMMapViewAnnotation.h */,
 				E83657DC19236FCC008DC8FC /* RGMMapViewAnnotation.m */,
-				E83657DE192381C7008DC8FC /* RGMPhotosTableViewController.h */,
-				E83657DF192381C7008DC8FC /* RGMPhotosTableViewController.m */,
+				E83657DE192381C7008DC8FC /* RGMTableViewController.h */,
+				E83657DF192381C7008DC8FC /* RGMTableViewController.m */,
 				E83657B91923543B008DC8FC /* Images.xcassets */,
 				E83657A51923543B008DC8FC /* Supporting Files */,
 			);
@@ -269,7 +269,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E83657AB1923543B008DC8FC /* main.m in Sources */,
-				E83657E0192381C7008DC8FC /* RGMPhotosTableViewController.m in Sources */,
+				E83657E0192381C7008DC8FC /* RGMTableViewController.m in Sources */,
 				E83657DD19236FCC008DC8FC /* RGMMapViewAnnotation.m in Sources */,
 				E83657D819235CD7008DC8FC /* RGMMapViewController.m in Sources */,
 				E83657AF1923543B008DC8FC /* RGMAppDelegate.m in Sources */,
