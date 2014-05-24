@@ -166,11 +166,20 @@
 
 #pragma mark Action Sheet Delegate Methods
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    NSLog(@"buttonIndex = %li", (long)buttonIndex);
     if (buttonIndex != actionSheet.cancelButtonIndex) {
         UIImagePickerController *ipc = [[UIImagePickerController alloc] init];
         if (buttonIndex == 0) {
-            ipc.sourceType = UIImagePickerControllerSourceTypeCamera;
+            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+                ipc.sourceType = UIImagePickerControllerSourceTypeCamera;
+            }
+            else {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Camera Not Available"
+                                                                message:@"This device does not have a camera, or the camera is currently unavailable."
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"Okay"
+                                                      otherButtonTitles:nil];
+                [alert show];
+            }
         }
         else if (buttonIndex == 1) {
             ipc.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
@@ -181,6 +190,5 @@
                          completion:^{
                              NSLog(@"Import Photo started");
                          }];
-    }
-}
+    }}
 @end
