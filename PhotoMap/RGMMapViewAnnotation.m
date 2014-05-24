@@ -1,13 +1,13 @@
 //
-//  RGMFirstViewController.h
+//  RGMMapViewAnnotation.m
 //  PhotoMap
 //
 //  Created by Ramon Pastor on 5/14/14.
 //  Copyright (c) 2014 Rogomi Inc. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "RGMMapViewAnnotation.h"
 
-@interface RGMFirstViewController : UIViewController
+@implementation RGMMapViewAnnotation
 
 @end
