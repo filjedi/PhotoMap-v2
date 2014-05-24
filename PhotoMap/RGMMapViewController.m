@@ -179,6 +179,7 @@
                                                       cancelButtonTitle:@"Okay"
                                                       otherButtonTitles:nil];
                 [alert show];
+                return;
             }
         }
         else if (buttonIndex == 1) {
