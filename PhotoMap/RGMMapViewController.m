@@ -2,14 +2,16 @@
 //  RGMMapViewController.m
 //  PhotoMap
 //
-//  Created by Ramon Pastor on 5/14/14.
-//  Copyright (c) 2014 Rogomi Inc. All rights reserved.
+//  Created by Ramon Pastor on 5/23/14.
+//  Copyright (c) 2014 Ramon Pastor. All rights reserved.
 //
 
 #import "RGMMapViewController.h"
+
 #import "RGMMapViewAnnotation.h"
 
 #import <AssetsLibrary/AssetsLibrary.h>
+#import <Social/Social.h>
 
 @interface RGMMapViewController ()
 
@@ -17,19 +19,10 @@
 
 @implementation RGMMapViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+	// Do any additional setup after loading the view, typically from a nib.
     self.tabBarController.delegate = self;
 }
 
@@ -39,38 +32,7 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
-#pragma mark View Controller Methods
-- (IBAction)refreshUserLocation:(id)sender {
-    [_photoMapView setRegion:MKCoordinateRegionMake(_photoMapView.userLocation.coordinate, MKCoordinateSpanMake(0.05, 0.05)) animated:YES];
-}
-
-- (IBAction)takePicture:(id)sender {
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Take Photo from"
-                                                       delegate:self
-                                              cancelButtonTitle:@"Cancel"
-                                         destructiveButtonTitle:nil
-                                              otherButtonTitles:@"Camera", @"Photos", nil];
-    [sheet showFromTabBar:self.tabBarController.tabBar];
-}
-
-#pragma mark Map View Delegate Methods
-- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation {
-    if (![_previousLocation isEqual:userLocation]) {
-        _previousLocation = userLocation;
-        [self refreshUserLocation:mapView];
-    }
-}
+#pragma mark Map View Methods
 
 - (void)mapView:(MKMapView *)mapView didFailToLocateUserWithError:(NSError *)error {
     NSString *messsage = [[NSString alloc] initWithFormat:@"Error %li : %@", (long)[error code], [error localizedDescription]];
@@ -81,6 +43,14 @@
                                           otherButtonTitles:nil];
     
     [alert show];
+    
+}
+
+- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation {
+    if (![_previousLocation isEqual:userLocation]) {
+        _previousLocation = userLocation;
+        [self refreshUserLocation:mapView];
+    }
 }
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id < MKAnnotation >)annotation {
@@ -94,26 +64,76 @@
     if (annotationView == nil) {
         annotationView = [[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier];
         annotationView.canShowCallout = YES;
+        
+        UIButton *rightButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        [rightButton addTarget:nil action:nil forControlEvents:UIControlEventTouchUpInside];
+        annotationView.rightCalloutAccessoryView = rightButton;
     }
     UIImage *resizedImage = [[UIImage alloc] initWithCGImage:mva.annotationImage.CGImage scale:64.0 orientation:UIImageOrientationUp];
     annotationView.image = resizedImage;
-//    NSLog(@"annotationView.image.size = %@", NSStringFromCGSize(annotationView.image.size));
     
     return annotationView;
 }
 
-#pragma Navigation Bar Delegate
+- (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control {
+    NSLog(@"%s", __FUNCTION__);
+    if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) {
+        SLComposeViewController *fbSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
+        
+        fbSheet.completionHandler = ^(SLComposeViewControllerResult result) {
+            switch(result) {
+                    //  This means the user cancelled without sending the Tweet
+                case SLComposeViewControllerResultCancelled:
+                    NSLog(@"FB Sheet cancelled");
+                    break;
+                    //  This means the user hit 'Send'
+                case SLComposeViewControllerResultDone:
+                    NSLog(@"FB Sheet sent request");
+                    break;
+            }
+        };
+        
+        RGMMapViewAnnotation *annotation = (RGMMapViewAnnotation *)view.annotation;
+        [fbSheet addImage:annotation.annotationImage];
+        [fbSheet setInitialText:annotation.title];
+        [self presentViewController:fbSheet
+                           animated:YES
+                         completion:^{
+                             NSLog(@"FBSheet presented");
+                         }];
+    }
+    else {
+        NSLog(@"Facebook not available");
+    }
+}
+
+#pragma mark Navigation Bar Methods
+
+
 - (UIBarPosition)positionForBar:(id<UIBarPositioning>)bar {
     return UIBarPositionTopAttached;
 }
 
-#pragma mark Image Picker Controller Delegate Methods
+- (IBAction)refreshUserLocation:(id)sender {
+    [_photoMapView setRegion:MKCoordinateRegionMake(_photoMapView.userLocation.coordinate, MKCoordinateSpanMake(0.05, 0.05)) animated:YES];
+}
+
+- (IBAction)takePicture:(id)sender {
+    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Take Photo from"
+                                                       delegate:self
+                                              cancelButtonTitle:@"Cancel"
+                                         destructiveButtonTitle:nil
+                                              otherButtonTitles:@"Camera", @"Photos", nil];
+    [sheet showFromTabBar:self.tabBarController.tabBar];
+}
+
+#pragma mark Image Picker Methods
+
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     UIImage *image = info[UIImagePickerControllerOriginalImage];
     
     [self dismissViewControllerAnimated:YES
                              completion:^{
-                                 NSLog(@"Import Photo done");
                                  RGMMapViewAnnotation *annotation = [[RGMMapViewAnnotation alloc] init];
                                  annotation.annotationImage = image;
                                  
@@ -121,7 +141,7 @@
                                  df.locale = [NSLocale currentLocale];
                                  df.dateStyle = NSDateFormatterShortStyle;
                                  df.timeStyle = NSDateFormatterShortStyle;
-
+                                 
                                  if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
                                      annotation.coordinate = _photoMapView.userLocation.coordinate;
                                      annotation.title = [df stringFromDate:[NSDate date]];
@@ -149,23 +169,9 @@
                              }];
 }
 
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
-    [self dismissViewControllerAnimated:YES
-                             completion:^{
-                                 NSLog(@"Import Photo cancelled");
-                             }];
-}
-
-#pragma mark Tab Bar Controller Delegate
-- (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
-    NSLog(@"%s", __FUNCTION__);
-    if (![viewController isEqual:self]) {
-        [viewController setValue:_photoMapView.annotations forKeyPath:@"annotations"];
-    }
-}
-
-#pragma mark Action Sheet Delegate Methods
+#pragma mark Action Sheet Methods
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    NSLog(@"buttonIndex = %li", (long)buttonIndex);
     if (buttonIndex != actionSheet.cancelButtonIndex) {
         UIImagePickerController *ipc = [[UIImagePickerController alloc] init];
         if (buttonIndex == 0) {
@@ -191,6 +197,14 @@
                          completion:^{
                              NSLog(@"Import Photo started");
                          }];
+    }
+}
+
+#pragma mark Tab Bar Methods
+- (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
+    if (![viewController isEqual:self]) {
+        NSLog(@"_photoMapView.annotations = %@", _photoMapView.annotations);
+        [viewController setValue:_photoMapView.annotations forKeyPath:@"annotations"];
     }
 }
 @end
